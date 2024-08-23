@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML 建築師 - 登入</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>HTML 建築師</h1>
+            <p>成為頂尖虛擬網頁建築師，完成任務，學習 HTML 技能！</p>
+            <button id="login-button">使用 GitHub 登入</button>
+        </header>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GithubAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDcQYAwWksrU5tnDJ8On_RCD8HBgPF-gAg",
+            authDomain: "html-architect-28801.firebaseapp.com",
+            projectId: "html-architect-28801",
+            storageBucket: "html-architect-28801.appspot.com",
+            messagingSenderId: "691512639425",
+            appId: "1:691512639425:web:f2b0482f1fc95a9e32b940"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const firestore = getFirestore(app);
+        const provider = new GithubAuthProvider();
+
+        document.getElementById('login-button').addEventListener('click', () => {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    window.location.href = "profile.html";
+                })
+                .catch((error) => {
+                    console.error('登入錯誤:', error.message);
+                });
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userDocRef = doc(firestore, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                if (!userDoc.exists()) {
+                    await setDoc(userDocRef, {
+                        displayName: user.displayName || '',
+                        role: 'user'
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

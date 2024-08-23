@@ -1,0 +1,217 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to right, #e2e2e2, #ffffff);
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* 使用 min-height 確保內容不會被切掉 */
+}
+
+.container {
+    width: 100%;
+    max-width: 900px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    box-sizing: border-box;
+    margin: 20px; /* 外邊距避免內容緊貼邊緣 */
+    overflow: auto; /* 增加 overflow 設定以處理內容溢出 */
+}
+
+header {
+    margin-bottom: 40px;
+}
+
+header h1 {
+    font-size: 2.5em;
+    color: #3f51b5;
+    margin-bottom: 15px;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+header p {
+    font-size: 1.4em;
+    color: #555;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+a {
+    color: #3f51b5;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #303f9f;
+    text-decoration: underline;
+}
+
+button {
+    background-color: #3f51b5;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    background-color: #303f9f;
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+button:focus {
+    outline: none;
+}
+
+#user-info {
+    margin-top: 30px;
+    padding: 25px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#user-info:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+#user-info p {
+    font-size: 1.2em;
+    margin: 15px 0;
+    color: #666;
+    line-height: 1.4;
+}
+
+#update-username {
+    margin-top: 30px;
+}
+
+#new-username {
+    width: calc(100% - 24px); /* 針對外邊距進行調整 */
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    transition: border-color 0.3s ease;
+}
+
+#new-username:focus {
+    border-color: #3f51b5;
+    outline: none;
+}
+
+#update-username-button {
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#update-username-button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+#update-status {
+    margin-top: 10px;
+    font-size: 1.1em;
+    color: #4caf50;
+}
+
+/* 用戶列表樣式 */
+#user-list {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.user-item {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.3s ease;
+}
+
+.user-item:hover {
+    background-color: #f0f0f0;
+}
+
+.user-item p {
+    margin: 5px 0;
+}
+
+.user-item .user-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.user-actions button {
+    margin: 0 5px;
+}
+
+/* VIPPP 用戶列表樣式 */
+#vippp-user-list {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.vippp-user-item {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.3s ease;
+}
+
+.vippp-user-item:hover {
+    background-color: #f0f0f0;
+}
+
+.vippp-user-item p {
+    margin: 5px 0;
+}
+
+.vippp-user-item .user-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.vippp-user-actions button {
+    margin: 0 5px;
+}
+
+/* 搜索框 */
+input[type="search"] {
+    width: calc(100% - 24px);
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s ease;
+}
+
+input[type="search"]:focus {
+    border-color: #3f51b5;
+    outline: none;
+}

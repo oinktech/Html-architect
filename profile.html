@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./css/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>歡迎頁面</title>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>歡迎頁面</h1>
+            <p>恭喜你已成功登入！</p>
+            <div id="user-info">
+                <!-- 用戶資訊會顯示在這裡 -->
+            </div>
+            <a href="./Userlevel.html">用戶階級操作說明</a>
+            
+
+            <div id="update-username">
+                <h2>變更用戶名</h2>
+                <input type="text" id="new-username" placeholder="輸入新用戶名">
+                <button id="update-username-button">更新用戶名</button>
+                <p id="update-status"></p>
+            </div>
+            <a href="./Userlevel.html">用戶階級</a>
+            <button id="logout-button">登出</button>
+
+            <div id="admin-section" style="display: none;">
+                <h2>管理員功能</h2>
+                <div id="admin-controls">
+                    <h3>用戶管理</h3>
+                    <input type="text" id="manage-uid" placeholder="輸入用戶ID">
+                    <button id="upgrade-user">升級用戶</button>
+                    <button id="block-user">封鎖帳號</button>
+                    <button id="unblock-user">啟用帳號</button>
+                    <button id="delete-user">刪除帳號</button>
+                    <button id="downgrade-user">降級用戶</button>
+                    <p id="admin-status"></p>
+                </div>
+                <div id="view-users">
+                    <h3>用戶列表</h3>
+                    <input type="text" id="user-search" placeholder="搜索用戶">
+                    <div id="users-list">
+                        <!-- 用戶列表會顯示在這裡 -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="vippp-section" style="display: none;">
+                <h2>VIPPP 管理功能</h2>
+                <div id="vippp-controls">
+                    <h3>用戶管理</h3>
+                    <input type="text" id="manage-uid-vippp" placeholder="輸入用戶ID">
+                    <button id="upgrade-user-vippp">升級用戶</button>
+                    <button id="block-user-vippp">封鎖帳號</button>
+                    <button id="unblock-user-vippp">啟用帳號</button>
+                    <button id="delete-user-vippp">刪除帳號</button>
+                    <button id="downgrade-user-vippp">降級用戶</button>
+                    <p id="vippp-status"></p>
+                </div>
+                <div id="view-vippp-users">
+                    <h3>VIPPP 用戶列表</h3>
+                    <input type="text" id="vippp-user-search" placeholder="搜索VIPPP用戶">
+                    <div id="vippp-users-list">
+                        <!-- VIPPP 用戶列表會顯示在這裡 -->
+                    </div>
+                </div>
+            </div>
+        </header>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, deleteDoc, getDocs, collection, query, where } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDcQYAwWksrU5tnDJ8On_RCD8HBgPF-gAg",
+            authDomain: "html-architect-28801.firebaseapp.com",
+            projectId: "html-architect-28801",
+            storageBucket: "html-architect-28801.appspot.com",
+            messagingSenderId: "691512639425",
+            appId: "1:691512639425:web:f2b0482f1fc95a9e32b940"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const firestore = getFirestore(app);
+
+        let currentUser;
+
+        // 當用戶狀態改變時
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userDocRef = doc(firestore, 'users', user.uid);
+                const userSnapshot = await getDoc(userDocRef);
+
+                if (userSnapshot.exists()) {
+                    const userData = userSnapshot.data();
+                    if (userData.status === 'blocked') {
+                        window.location.href = "blocked.html"; // 封鎖頁面
+                        return;
+                    }
+
+                    displayUserInfo(user, userData);
+                    checkUserRole(userData);
+                } else {
+                    window.location.href = "index.html";
+                }
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        // 顯示用戶資訊
+        function displayUserInfo(user, userData) {
+            const userInfoDiv = document.getElementById('user-info');
+            userInfoDiv.innerHTML = `
+                <p>用戶名: <span id="display-name">${user.displayName || '未提供'}</span></p>
+                <p>電子郵件: ${user.email}</p>
+                <p>用戶ID: ${user.uid}</p>
+                <p>登入方法: ${user.providerData[0].providerId}</p>
+                <p>階級: ${userData.role || '普通用戶'}</p>
+            `;
+            document.getElementById('new-username').value = user.displayName || '';
+        }
+
+        // 檢查用戶角色並顯示相應功能
+        async function checkUserRole(userData) {
+            const adminSection = document.getElementById('admin-section');
+            const vipppSection = document.getElementById('vippp-section');
+
+            if (userData.role === 'vippp') {
+                adminSection.style.display = 'none';
+                vipppSection.style.display = 'block';
+                displayAllUsers(); // 顯示所有用戶列表
+            } else if (userData.role === 'admin') {
+                adminSection.style.display = 'block';
+                vipppSection.style.display = 'none';
+                displayRegularUsers(); // 顯示普通用戶列表
+            } else {
+                adminSection.style.display = 'none';
+                vipppSection.style.display = 'none';
+            }
+        }
+
+        // 顯示所有用戶（VIPPP）
+        async function displayAllUsers(searchTerm = '') {
+            const usersListDiv = document.getElementById('vippp-users-list');
+            usersListDiv.innerHTML = '<p>加載中...</p>';
+            try {
+                const usersSnapshot = await getDocs(collection(firestore, 'users'));
+                if (usersSnapshot.empty) {
+                    usersListDiv.innerHTML = '<p>沒有用戶資料。</p>';
+                } else {
+                    usersListDiv.innerHTML = '';
+                    usersSnapshot.forEach((doc) => {
+                        const userData = doc.data();
+                        if (userData.displayName && userData.displayName.includes(searchTerm)) {
+                            usersListDiv.innerHTML += `<p>用戶ID: ${doc.id}, 用戶名: ${userData.displayName || '未提供'}, 狀態: ${userData.status || '未設定'}, 角色: ${userData.role || '未設定'}</p>`;
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('顯示用戶列表錯誤:', error);
+                usersListDiv.innerHTML = '<p>顯示用戶列表錯誤。</p>';
+            }
+        }
+
+        // 顯示普通用戶（admin）
+        async function displayRegularUsers(searchTerm = '') {
+            const usersListDiv = document.getElementById('users-list');
+            usersListDiv.innerHTML = '<p>加載中...</p>';
+            try {
+                const usersSnapshot = await getDocs(query(collection(firestore, 'users'), where('role', '!=', 'vippp')));
+                if (usersSnapshot.empty) {
+                    usersListDiv.innerHTML = '<p>沒有用戶資料。</p>';
+                } else {
+                    usersListDiv.innerHTML = '';
+                    usersSnapshot.forEach((doc) => {
+                        const userData = doc.data();
+                        if (userData.displayName && userData.displayName.includes(searchTerm)) {
+                            usersListDiv.innerHTML += `<p>用戶ID: ${doc.id}, 用戶名: ${userData.displayName || '未提供'}, 狀態: ${userData.status || '未設定'}, 角色: ${userData.role || '未設定'}</p>`;
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('顯示用戶列表錯誤:', error);
+                usersListDiv.innerHTML = '<p>顯示用戶列表錯誤。</p>';
+            }
+        }
+
+        // 更新用戶名
+        document.getElementById('update-username-button').addEventListener('click', async () => {
+            const newUsername = document.getElementById('new-username').value;
+            if (currentUser && newUsername) {
+                try {
+                    await updateProfile(currentUser, { displayName: newUsername });
+                    await setDoc(doc(firestore, 'users', currentUser.uid), { displayName: newUsername }, { merge: true });
+                    document.getElementById('update-status').textContent = '用戶名更新成功！';
+                    document.getElementById('display-name').textContent = newUsername;
+                } catch (error) {
+                    console.error('更新用戶名錯誤:', error);
+                    document.getElementById('update-status').textContent = '更新用戶名失敗！';
+                }
+            }
+        });
+
+        // 登出
+        document.getElementById('logout-button').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.href = "index.html";
+            }).catch((error) => {
+                console.error('登出錯誤:', error);
+            });
+        });
+
+        // 管理員升級用戶
+        document.getElementById('upgrade-user').addEventListener('click', async () => {
+            const uid = document.getElementById('manage-uid').value;
+            if (uid) {
+                try {
+                    await setDoc(doc(firestore, 'users', uid), { role: 'vippp' }, { merge: true });
+                    document.getElementById('admin-status').textContent = '用戶升級成功！';
+                    displayRegularUsers(); // 更新用戶列表
+                } catch (error) {
+                    console.error('升級用戶錯誤:', error);
+                    document.getElementById('admin-status').textContent = '升級用戶失敗！';
+                }
+            }
+        });
+
+        // 管理員降級用戶
+        document.getElementById('downgrade-user').addEventListener('click', async () => {
+            const uid = document.getElementById('manage-uid').value;
+            if (uid) {
+                try {
+                    await setDoc(doc(firestore, 'users', uid), { role: 'user' }, { merge: true });
+                    document.getElementById('admin-status').textContent = '用戶降級成功！';
+                    displayRegularUsers(); // 更新用戶列表
+                } catch (error) {
+                    console.error('降級用戶錯誤:', error);
+                    document.getElementById('admin-status').textContent = '降級用戶失敗！';
+                }
+            }
+        });
+
+        // 管理員封鎖用戶
+        document.getElementById('block-user').addEventListener('click', async () => {
+            const uid = document.getElementById('manage-uid').value;
+            if (uid) {
+                try {
+                    await setDoc(doc(firestore, 'users', uid), { status: 'blocked' }, { merge: true });
+                    document.getElementById('admin-status').textContent = '用戶已封鎖！';
+                    displayRegularUsers(); // 更新用戶列表
+                } catch (error) {
+                    console.error('封鎖用戶錯誤:', error);
+                    document.getElementById('admin-status').textContent = '封鎖用戶失敗！';
+                }
+            }
+        });
+
+        // 管理員啟用用戶
+        document.getElementById('unblock-user').addEventListener('click', async () => {
+            const uid = document.getElementById('manage-uid').value;
+            if (uid) {
+                try {
+                    await setDoc(doc(firestore, 'users', uid), { status: 'active' }, { merge: true });
+                    document.getElementById('admin-status').textContent = '用戶已啟用！';
+                    displayRegularUsers(); // 更新用戶列表
+                } catch (error) {
+                    console.error('啟用用戶錯誤:', error);
+                    document.getElementById('admin-status').textContent = '啟用用戶失敗！';
+                }
+            }
+        });
+
+        // 管理員刪除用戶
+        document.getElementById('delete-user').addEventListener('click', async () => {
+            const uid = document.getElementById('manage-uid').value;
+            if (uid) {
+                try {
+                    await deleteDoc(doc(firestore, 'users', uid));
+                    document.getElementById('admin-status').textContent = '用戶已刪除！';
+                    displayRegularUsers(); // 更新用戶列表
+                } catch (error) {
+                    console.error('刪除用戶錯誤:', error);
+                    document.getElementById('admin-status').textContent = '刪除用戶失敗！';
+                }
+            }
+        });
+
+        // VIPPP 用戶升級
+        document.getElementById('upgrade-user-vippp').addEventListener('click', async () => {
+            const uid = document.getElementById('manage-uid-vippp').value;
+            if (uid) {
+                try {
+                    await setDoc(doc(firestore, 'users', uid), { role: 'admin' }, { merge: true });
+                    document.getElementById('vippp-status').textContent = '用戶升級成功！';
+                    displayAllUsers(); // 更新VIPPP用戶列表
+                } catch (error) {
+                    console.error('升級用戶錯誤:', error);
+                    document.getElementById('vippp-status').textContent = '升級用戶失敗！';
+                }
+            }
+        });
+
+        // VIPPP 用戶降級
+        document.getElementById('downgrade-user-vippp').addEventListener('click', async () => {
+            const uid = document.getElementById('manage-uid-vippp').value;
+            if (uid) {
+                try {
+                    await setDoc(doc(firestore, 'users', uid), { role: 'user' }, { merge: true });
+                    document.getElementById('vippp-status').textContent = '用戶降級成功！';
+                    displayAllUsers(); // 更新VIPPP用戶列表
+                } catch (error) {
+                    console.error('降級用戶錯誤:', error);
+                    document.getElementById('vippp-status').textContent = '降級用戶失敗！';
+                }
+            }
+        });
+
+        // VIPPP 用戶封鎖
+        document.getElementById('block-user-vippp').addEventListener('click', async () => {
+            const uid = document.getElementById('manage-uid-vippp').value;
+            if (uid) {
+                try {
+                    await setDoc(doc(firestore, 'users', uid), { status: 'blocked' }, { merge: true });
+                    document.getElementById('vippp-status').textContent = '用戶已封鎖！';
+                    displayAllUsers(); // 更新VIPPP用戶列表
+                } catch (error) {
+                    console.error('封鎖用戶錯誤:', error);
+                    document.getElementById('vippp-status').textContent = '封鎖用戶失敗！';
+                }
+            }
+        });
+
+        // VIPPP 用戶啟用
+        document.getElementById('unblock-user-vippp').addEventListener('click', async () => {
+            const uid = document.getElementById('manage-uid-vippp').value;
+            if (uid) {
+                try {
+                    await setDoc(doc(firestore, 'users', uid), { status: 'active' }, { merge: true });
+                    document.getElementById('vippp-status').textContent = '用戶已啟用！';
+                    displayAllUsers(); // 更新VIPPP用戶列表
+                } catch (error) {
+                    console.error('啟用用戶錯誤:', error);
+                    document.getElementById('vippp-status').textContent = '啟用用戶失敗！';
+                }
+            }
+        });
+
+        // VIPPP 用戶刪除
+        document.getElementById('delete-user-vippp').addEventListener('click', async () => {
+            const uid = document.getElementById('manage-uid-vippp').value;
+            if (uid) {
+                try {
+                    await deleteDoc(doc(firestore, 'users', uid));
+                    document.getElementById('vippp-status').textContent = '用戶已刪除！';
+                    displayAllUsers(); // 更新VIPPP用戶列表
+                } catch (error) {
+                    console.error('刪除用戶錯誤:', error);
+                    document.getElementById('vippp-status').textContent = '刪除用戶失敗！';
+                }
+            }
+        });
+
+        // 搜索用戶
+        document.getElementById('user-search').addEventListener('input', (event) => {
+            const searchTerm = event.target.value;
+            displayRegularUsers(searchTerm);
+        });
+
+        document.getElementById('vippp-user-search').addEventListener('input', (event) => {
+            const searchTerm = event.target.value;
+            displayAllUsers(searchTerm);
+        });
+    </script>
+</body>
+</html>

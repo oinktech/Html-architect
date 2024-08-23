@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用戶階級操作說明</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #e2e2e2, #ffffff);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            box-sizing: border-box;
+            margin: 20px;
+            overflow: auto;
+        }
+
+        header {
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            color: #3f51b5;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        header p {
+            font-size: 1.4em;
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .level-description {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+        }
+
+        .level-description h2 {
+            font-size: 1.8em;
+            color: #3f51b5;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .level-description p {
+            font-size: 1.2em;
+            margin: 15px 0;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .level-description ul {
+            list-style: disc;
+            margin: 15px 0;
+            padding-left: 20px;
+            text-align: left;
+        }
+
+        .level-description ul li {
+            margin-bottom: 10px;
+        }
+
+        .level-description a {
+            color: #3f51b5;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .level-description a:hover {
+            color: #303f9f;
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: 40px;
+            font-size: 1em;
+            color: #666;
+        }
+
+        footer a {
+            color: #3f51b5;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #303f9f;
+            text-decoration: underline;
+        }
+
+        /* 新增的樣式 */
+        .navigation {
+            text-align: left;
+            margin-bottom: 40px;
+        }
+
+        .navigation ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .navigation ul li {
+            margin-bottom: 10px;
+        }
+
+        .navigation ul li a {
+            color: #3f51b5;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+
+        .navigation ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .details {
+            margin-top: 10px;
+        }
+
+        .details summary {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #3f51b5;
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+
+        .details p {
+            font-size: 1.1em;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>用戶階級操作說明</h1>
+            <p>了解每個用戶階級的功能和操作權限，讓您更好地利用系統的所有功能。</p>
+        </header>
+
+        <!-- 新增的導航部分 -->
+        <nav class="navigation">
+            <ul>
+                <li><a href="#basic-user">基本用戶</a></li>
+                <li><a href="#advanced-user">高級用戶</a></li>
+                <li><a href="#admin">管理員</a></li>
+            </ul>
+        </nav>
+
+        <div id="basic-user" class="level-description">
+            <h2>1. 基本用戶</h2>
+            <p>基本用戶擁有系統的基本操作權限，包括：</p>
+            <ul>
+                <li>查看個人資料和設置</li>
+                <li>瀏覽系統內的公共內容</li>
+                <li>提交反饋和報告問題</li>
+            </ul>
+            <!-- 可折疊的詳細說明 -->
+            <details class="details">
+                <summary>更多詳細操作</summary>
+                <p>基本用戶可以查看並更新自己的個人資料，例如修改密碼或更新聯繫信息。此外，他們可以通過提交意見反饋或報告問題來與管理員互動，幫助改進系統。</p>
+            </details>
+        </div>
+
+        <div id="advanced-user" class="level-description">
+            <h2>2. 高級用戶</h2>
+            <p>高級用戶除了擁有基本用戶的權限外，還可以進行以下操作：</p>
+            <ul>
+                <li>編輯和更新系統內的個人內容</li>
+                <li>訪問高級功能和工具</li>
+                <li>參加系統內部的專項討論和活動</li>
+            </ul>
+            <!-- 可折疊的詳細說明 -->
+            <details class="details">
+                <summary>更多詳細操作</summary>
+                <p>高級用戶有權訪問更多系統資源，參與高級討論區並使用特定的工具來定制他們的系統體驗。他們還可以通過管理更多內容來支持社群。</p>
+            </details>
+        </div>
+
+        <div id="admin" class="level-description">
+            <h2>3. 管理員</h2>
+            <p>管理員擁有最高權限，可以進行以下操作：</p>
+            <ul>
+                <li>管理系統中的用戶和權限</li>
+                <li>配置和設置系統參數</li>
+                <li>查看和分析系統報告和數據</li>
+            </ul>
+            <!-- 可折疊的詳細說明 -->
+            <details class="details">
+                <summary>更多詳細操作</summary>
+                <p>管理員有權管理整個系統的運營，包括添加或移除用戶，分配權限，監控系統性能，並確保系統運行的穩定性和安全性。</p>
+            </details>
+        </div>
+
+        <footer>
+            <p>如果有任何問題或需要進一步的幫助，請訪問我們的 <a href="support.html">支援頁面</a> 或聯繫我們的客服。</p>
+        </footer>
+    </div>
+</body>
+</html>
